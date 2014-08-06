@@ -2,6 +2,10 @@ require 'spec_helper'
 
 describe "StaticPages" do
 
+  let(:base_title) { "RoRT Sample App" }
+
+
+
   describe "Home page" do
     # this said to run it again if I want to use webrat functions,
     # i'm assuming webrat is an alternative to capybara?
@@ -13,7 +17,7 @@ describe "StaticPages" do
     # title!
     it "should have title 'RoRT Sample App | Home'" do
       visit '/static_pages/home'
-      expect(page).to have_title('RoRT Sample App | Home')
+      expect(page).to have_title("#{base_title} | Home")
     end
 
   end
@@ -27,7 +31,7 @@ describe "StaticPages" do
     # title!
     it "should have title 'RoRT Sample App | Title'" do
       visit '/static_pages/help'
-      expect(page).to have_title('RoRT Sample App | Help')
+      expect(page).to have_title("#{base_title} | Help")
     end
   end
 
@@ -40,7 +44,7 @@ describe "StaticPages" do
     # title!
     it "should have title 'RoRT Sample App | About'" do
       visit '/static_pages/about'
-      expect(page).to have_title('RoRT Sample App | About')
+      expect(page).to have_title("#{base_title} | About")
     end
 
   end
@@ -52,7 +56,7 @@ describe "StaticPages" do
     end
     it "should have the title 'RoRT Sample App | Contact'" do
       visit '/static_pages/contact'
-      expect(page).to have_title('RoRT Sample App | Contact')
+      expect(page).to have_title("#{base_title} | Contact")
     end
   end
 
