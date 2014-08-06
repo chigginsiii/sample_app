@@ -45,4 +45,15 @@ describe "StaticPages" do
 
   end
 
+  describe "Contact page" do
+    it "should have the content 'Contact'" do
+      visit '/static_pages/contact'
+      expect(page).to have_content('Contact')
+    end
+    it "should have the title 'RoRT Sample App | Contact'" do
+      visit '/static_pages/contact'
+      expect(page).to have_title('RoRT Sample App | Contact')
+    end
+  end
+
 end
