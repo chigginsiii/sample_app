@@ -4,6 +4,9 @@ ruby "2.0.0"
 #ruby-gemset=railtoot_rails_4
 
 gem 'rails', '4.0.8'
+gem 'sass', '~>3.2.15'
+gem 'bootstrap-sass', '2.3.2.0'
+gem 'sprockets', '2.11.0'
 gem 'pg', '0.15.1'
 
 group :development, :test do
