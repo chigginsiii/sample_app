@@ -27,6 +27,21 @@ describe "UsersPages" do
       it "should not create a user" do
         expect{ click_button submit }.not_to change(User, :count)
       end
+
+      describe "after submission" do
+        before do
+          fill_in "Name", with: "Example User"
+          fill_in "Email", with: "user@example"
+          fill_in "Password", with: "fooba"
+          fill_in "Confirmation", with: "toobar"
+          click_button submit
+        end
+        it { should have_title("Sign Up") }
+        it { should have_content("3 errors") }
+        it { should have_content("Email is invalid") }
+        it { should have_content("doesn't match Password") }
+        it { should have_content("is too short") }
+      end
     end
 
     describe "with valid information" do
