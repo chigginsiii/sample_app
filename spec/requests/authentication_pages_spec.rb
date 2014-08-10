@@ -25,7 +25,7 @@ describe "Authentication" do
       let(:user) { FactoryGirl.create(:user) }
       before { signin_valid(user) }
 
-      it { should be_signed_in }
+      it { should be_signed_in(user) }
 
       describe "followed by signing out" do
         before { click_signout }
