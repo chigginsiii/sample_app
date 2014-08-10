@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   # all lowercase emails
   before_save { self.email = email.downcase }
-
+  before_create :create_remember_token
   # simple presence and length
   validates :name, presence: true, length: { maximum: 50 }
 
@@ -18,4 +18,23 @@ class User < ActiveRecord::Base
   #   :password and :password_confirmation init params
   #   validate: present and both match
   #   find user by email address, match pw to digest, return user or false
+
+  def User.new_remember_token
+    SecureRandom.urlsafe_base64
+  end
+
+  def User.digest(token)
+    Digest::SHA1.hexdigest(token.to_s)
+  end
+
+  private
+
+    def email_down(email)
+      self.email = email.downcase
+    end
+
+    def create_remember_token
+      self.remember_token = User.digest(User.new_remember_token)
+    end
+    
 end
