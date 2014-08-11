@@ -45,16 +45,24 @@ describe "Authentication" do
       describe "in the Users controller" do
 
         describe "visiting the edit page" do
-          before { visit user_path(user) }
+          before { visit edit_user_path(user) }
           it { should_not have_content('Update your profile') }
           it { should have_content('Sign In') }
+
+          describe "after signing in" do
+            before do
+              fill_in "Email", with: user.email
+              fill_in "Password", with: user.password
+              click_button "Sign In"
+            end
+            it { should have_title('Edit Profile') }
+          end
         end
 
         describe "submitting the update action" do
           before { patch user_path(user) }
           specify { expect(response).to redirect_to(signin_path) }
         end
-
       end
     end
 
