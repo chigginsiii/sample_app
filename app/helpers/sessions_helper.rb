@@ -8,6 +8,7 @@ module SessionsHelper
   end
 
   def sign_out
+    return unless current_user
     current_user.update_attribute( :remember_token, User.digest(User.new_remember_token) )
     cookies.delete(:remember_token)
     self.current_user = nil
@@ -20,12 +21,19 @@ module SessionsHelper
   end
 
   def current_user
-    token_hash = User.digest(cookies[:remember_token])
-    @current_user ||= User.find_by(:remember_token => token_hash)
+    cookie_token = cookies[:remember_token]
+    this_user    = @current_user
+    @current_user ||= User.find_by_remember_token( User.digest( cookies[:remember_token] ) )
+  end
+
+  def current_user?(user)
+    result = ( user == self.current_user )
+    result
   end
 
   def signed_in?
-    !current_user.nil?
+    signed_in = !self.current_user.nil?
+    signed_in
   end
 
 end

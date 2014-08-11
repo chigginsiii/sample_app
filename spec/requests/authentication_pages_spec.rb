@@ -37,4 +37,49 @@ describe "Authentication" do
 
   end
 
+  describe "authorization" do
+
+    describe "for non-logged-in Users" do
+      let(:user) { FactoryGirl.create(:user) }
+      before { delete signout_path(user) }
+      describe "in the Users controller" do
+
+        describe "visiting the edit page" do
+          before { visit user_path(user) }
+          it { should_not have_content('Update your profile') }
+          it { should have_content('Sign In') }
+        end
+
+        describe "submitting the update action" do
+          before { patch user_path(user) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+      end
+    end
+
+    describe "as wrong user" do
+      let(:user) { FactoryGirl.create(:user) }
+      let(:wronguser) { FactoryGirl.create(:user, email: 'wrongo@example.com') }
+
+      describe "submitting a GET request to Users#edit action" do
+        before do
+          sign_in user, no_capybara: true
+          get edit_user_path( wronguser )
+        end
+        specify { expect(response.body).not_to match(full_title('Edit Profile')) }
+        specify { expect(response).to redirect_to(root_url) }
+      end
+
+      describe "submitting a PATCH to Users#update action" do
+        before do
+          sign_in user, no_capybara: true
+          patch user_path(wronguser)
+        end
+        specify { expect(response).to redirect_to(root_url) }
+      end
+    end
+
+  end
+
 end
