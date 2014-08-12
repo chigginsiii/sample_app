@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe User do
+
   before do
     @user = User.new(name: 'Example User', email: 'user@example.com',
                      password: 'tryme!', password_confirmation: 'tryme!' )
@@ -16,6 +17,8 @@ describe User do
 
   it { should respond_to(:authenticate) }
   it { should respond_to(:admin) }
+  it { should respond_to(:microposts) }
+
   it { should be_valid }
   it { should_not be_admin }
 
@@ -117,6 +120,36 @@ describe User do
   describe "remember token" do
     before { @user.save }
     its(:remember_token) { should_not be_blank }
+  end
+
+  describe "micropost associations" do
+    before { @user.save }
+    let!(:older_mp) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
+    end
+    let!(:newer_mp) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.hour.ago)
+    end
+
+    it "should have microposts in the right order" do
+      expect(@user.microposts.to_a).to eq [newer_mp, older_mp]
+    end
+
+    describe "status" do
+      let(:unfollowed) { FactoryGirl.create(:micropost, user: FactoryGirl.create(:user)) }
+      its(:feed) { should include(newer_mp) }
+      its(:feed) { should include(older_mp) }
+      its(:feed) { should_not include(:unfollowed) }
+    end
+
+    it "should destroy associated microposts" do
+      microposts = @user.microposts.to_a
+      @user.destroy
+      expect(microposts).not_to be_empty
+      microposts.each do |m|
+        expect( Micropost.find_by(id: m.id) ).to be_nil
+      end
+    end
   end
 
 end
