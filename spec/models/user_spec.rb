@@ -19,6 +19,12 @@ describe User do
   it { should respond_to(:admin) }
   it { should respond_to(:microposts) }
 
+  it { should respond_to(:relationships) }
+  it { should respond_to(:followed_users) }
+  it { should respond_to(:followers) }
+  it { should respond_to(:following?) }
+  it { should respond_to(:follow!) }
+
   it { should be_valid }
   it { should_not be_admin }
 
@@ -137,9 +143,22 @@ describe User do
 
     describe "status" do
       let(:unfollowed) { FactoryGirl.create(:micropost, user: FactoryGirl.create(:user)) }
+      let(:followed_user) { FactoryGirl.create(:user) }
+      before do
+        @user.follow!(followed_user)
+        3.times { FactoryGirl.create(:micropost, user: followed_user) }
+      end
+
       its(:feed) { should include(newer_mp) }
       its(:feed) { should include(older_mp) }
       its(:feed) { should_not include(:unfollowed) }
+
+      its(:feed) do
+        followed_user.microposts.each do |m|
+          should include(m)
+        end
+      end
+
     end
 
     it "should destroy associated microposts" do
@@ -149,6 +168,29 @@ describe User do
       microposts.each do |m|
         expect( Micropost.find_by(id: m.id) ).to be_nil
       end
+    end
+  end
+
+  describe "following" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    before do
+      @user.save
+      @user.follow!(other_user)
+    end
+
+    it { should be_following(other_user) }
+    its(:followed_users) { should include(other_user) }
+
+    describe "and unfollowing" do
+      before { @user.unfollow!(other_user) }
+
+      it { should_not be_following(other_user) }
+      its(:followed_users) { should_not include(other_user) }
+    end
+
+    describe "followers" do
+      subject { other_user }
+      its(:followers) { should include(@user) }
     end
   end
 

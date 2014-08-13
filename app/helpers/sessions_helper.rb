@@ -27,13 +27,11 @@ module SessionsHelper
   end
 
   def current_user?(user)
-    result = ( user == self.current_user )
-    result
+    user == self.current_user
   end
 
   def signed_in?
-    signed_in = !self.current_user.nil?
-    signed_in
+    !self.current_user.nil?
   end
 
   def store_location

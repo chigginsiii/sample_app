@@ -40,6 +40,20 @@ def sign_in( user, options={} )
   end
 end
 
+RSpec::Matchers.define :followers_page_match do
+  match do |page|
+    expect(page).to have_title(full_title("Followers"))
+    expect(page).to have_selector('h3', text:"Followers")
+  end
+end
+
+RSpec::Matchers.define :following_page_match do
+  match do |page|
+    expect(page).to have_title(full_title("Following"))
+    expect(page).to have_selector('h3', text:"Following")
+  end
+end
+
 RSpec::Matchers.define :be_signed_out do
   match do |page|
     expect(page).to have_link("Sign In")

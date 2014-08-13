@@ -42,6 +42,7 @@ describe "Authentication" do
     describe "for non-logged-in Users" do
       let(:user) { FactoryGirl.create(:user) }
       before { delete signout_path(user) }
+
       describe "in the Users controller" do
 
         describe "visiting the edit page" do
@@ -57,6 +58,22 @@ describe "Authentication" do
             end
             it { should have_title('Edit Profile') }
           end
+
+        end
+
+        describe "visiting the following page" do
+          let(:other_user) { FactoryGirl.create(:user) }
+          before do
+            visit following_user_path(other_user)
+          end
+          it { should have_title('Sign In') }
+        end
+
+        describe "visiting the followers page" do
+          let(:other_user) { FactoryGirl.create(:user) }
+          subject { page }
+          before { visit followers_user_path(other_user) }
+          it { should have_title("Sign In") }
         end
 
         describe "submitting the update action" do
@@ -69,21 +86,35 @@ describe "Authentication" do
             it { should have_title("Sign In") }
         end
 
-      end
+      end # in the Users controller
 
       describe "in the Microposts controller" do
         describe "submitting to the create action" do
           before { post microposts_path }
           specify { expect(response).to redirect_to(signin_path) }
         end
-        describe "submitting to the dsetroy action" do
+        describe "submitting to the dsestroy action" do
           before { delete micropost_path(FactoryGirl.create(:micropost)) }
           specify { expect(response).to redirect_to(signin_path) }
         end
 
       end
 
-    end
+      describe "in the Relationships controller" do
+
+        describe "create relationship with POST /relationships" do
+          before { post relationships_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe "delete relationship with DELETE /relationships/1" do
+          before { delete relationship_path(1) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+      end
+
+    end # for non-logged in users
 
     describe "as wrong user" do
       let(:user) { FactoryGirl.create(:user) }
