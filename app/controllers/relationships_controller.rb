@@ -1,4 +1,5 @@
 class RelationshipsController < ApplicationController
+  
   before_action :signed_in_user, only: [:create, :destroy]
 
   def create
@@ -11,10 +12,10 @@ class RelationshipsController < ApplicationController
   end
 
   def destroy
-    @followed_user = Relationship.find(params[:id]).followed
-    current_user.unfollow!(@followed_user)
+    @user = Relationship.find(params[:id]).followed
+    current_user.unfollow!(@user)
     respond_to do |format|
-      format.html { redirect_to @followed_user }
+      format.html { redirect_to @user }
       format.js
     end
   end
